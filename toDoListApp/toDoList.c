@@ -17,9 +17,26 @@ taskToDo* tail = NULL;
  *
  *
  *
- *	RETURNS		: -1 if failure, 0 if success
+ *	RETURNS		: pointer of a taskToDo struct
  */
--
+AddTask()
+{
+	//allocate memory for this new task
+	taskToDo* newTask = (taskToDo*)malloc(sizeof(taskToDo))
+
+	//get input of name for the task (max 30 chars plus null)
+
+
+	//get description of name for the task (max 50 chars plus null)
+
+
+	//update the tail to point to this new task's memory address
+
+
+	//free the memory of the
+
+
+}
 
 
 
