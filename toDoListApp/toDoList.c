@@ -45,13 +45,27 @@ AddTask()
   *	DESCRIPTION	: Prints all tasks in the collection (doubly linked list) of tasks
   *
   *
-  *	PARAMETERS	:
+  *	PARAMETERS	: None
   *
   *
   *
   *	RETURNS		: void
 */
--
+void PrintTasks() {
+	if (head == NULL) {
+		printf("No tasks to display.\n");
+		return;
+}
+	taskToDo* current = head;
+	while (current != NULL) {
+		printf("Task ID: %d\n", current->id);
+		printf("Task: %s\n", current->task);
+		printf("Priority: %d\n", current->priority);
+		printf("Due Date: %s\n", current->dueDate);
+		printf("\n");
+		current = current->next;
+	}
+}
 
 
 
@@ -59,13 +73,34 @@ AddTask()
 * Function: FindTaskViaId
 * Description: Finds a task in the collection (doubly linked list) of tasks by its ID
 *
-* Parameters:
+* Parameters: None
 *
 *
 *
 * Returns: void
 */
--
+void FindTaskViaId() {
+	int searchID;
+	printf("Enter the ID of the task to find: ");
+	if (scanf("%d", &searchID) != 1) {
+		printf("Invalid input.\n");
+		while (getchar() != '\n'); // Clear the input buffer
+		return;
+	}
+	while (getchar() != '\n');
+	taskToDo* current = head;
+	while (current != NULL) {
+		if (current->id == searchID) {
+			printf("Task ID: %d\n", current->id);
+			printf("Task: %s\n", current->task);
+			printf("Priority: %d\n", current->priority);
+			printf("Due Date: %s\n", current->dueDate);
+			return;
+		}
+		current = current->nextTask;
+	}
+	printf("Task not found.\n");
+}
 
 
 /*
