@@ -41,8 +41,9 @@ void PrintTasks() {
 }
 	taskToDo* current = head;
 	while (current != NULL) {
-		printf("Task ID: %d\n", current->id);
-		printf("Task: %s\n", current->task);
+		printf("Task ID: %d\n", current->taskId);
+		printf("Task: %s\n", current->name);
+		printf("Description: %s\n", current->description);
 		printf("\n");
 		current = current->nextTask;
 	}
@@ -71,9 +72,10 @@ void FindTaskViaId() {
 	while (getchar() != '\n');
 	taskToDo* current = head;
 	while (current != NULL) {
-		if (current->id == searchID) {
-			printf("Task ID: %d\n", current->id);
-			printf("Task: %s\n", current->task);
+		if (current->taskId == searchID) {
+			printf("Task ID: %d\n", current->taskId);
+			printf("Task: %s\n", current->name);
+			printf("Description: %s\n", current->description);
 			return;
 		}
 		current = current->nextTask;
