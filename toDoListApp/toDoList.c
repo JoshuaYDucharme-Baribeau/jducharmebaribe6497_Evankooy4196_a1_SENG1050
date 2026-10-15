@@ -28,13 +28,27 @@ taskToDo* tail = NULL;
   *	DESCRIPTION	: Prints all tasks in the collection (doubly linked list) of tasks
   *
   *
-  *	PARAMETERS	:
+  *	PARAMETERS	: None
   *
   *
   *
   *	RETURNS		: void
 */
--
+void PrintTasks() {
+	if (head == NULL) {
+		printf("No tasks to display.\n");
+		return;
+}
+	taskToDo* current = head;
+	while (current != NULL) {
+		printf("Task ID: %d\n", current->id);
+		printf("Task: %s\n", current->task);
+		printf("Priority: %d\n", current->priority);
+		printf("Due Date: %s\n", current->dueDate);
+		printf("\n");
+		current = current->next;
+	}
+}
 
 
 
