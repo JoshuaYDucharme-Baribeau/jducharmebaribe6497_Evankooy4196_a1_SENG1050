@@ -43,10 +43,8 @@ void PrintTasks() {
 	while (current != NULL) {
 		printf("Task ID: %d\n", current->id);
 		printf("Task: %s\n", current->task);
-		printf("Priority: %d\n", current->priority);
-		printf("Due Date: %s\n", current->dueDate);
 		printf("\n");
-		current = current->next;
+		current = current->nextTask;
 	}
 }
 
@@ -76,8 +74,6 @@ void FindTaskViaId() {
 		if (current->id == searchID) {
 			printf("Task ID: %d\n", current->id);
 			printf("Task: %s\n", current->task);
-			printf("Priority: %d\n", current->priority);
-			printf("Due Date: %s\n", current->dueDate);
 			return;
 		}
 		current = current->nextTask;
