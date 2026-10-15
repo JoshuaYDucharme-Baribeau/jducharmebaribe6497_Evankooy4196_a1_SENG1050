@@ -10,5 +10,6 @@
             - main file where program starts
             - use switch to go through menu?
         toDoList.c
+            - change plan from all functions being in here so we can work without screwin
 
 */
