@@ -8,17 +8,68 @@
 taskToDo* head = NULL;
 taskToDo* tail = NULL;
 
+/*
+ *	FUNCTION	: AddTask
+ *	DESCRIPTION	: Creates and adds a task to the collection (doubly linked list) of tasks
+ *
+ *
+ *	PARAMETERS	:
+ *
+ *
+ *
+ *	RETURNS		: -1 if failure, 0 if success
+ */
+-
+
+
+
+ /*
+  *	FUNCTION	: PrintTasks
+  *	DESCRIPTION	: Prints all tasks in the collection (doubly linked list) of tasks
+  *
+  *
+  *	PARAMETERS	:
+  *
+  *
+  *
+  *	RETURNS		: void
+*/
+-
 
 
 
 /*
- *	FUNCTION	: AddTask 
- *	DESCRIPTION	: Creates and adds a task to the collection (doubly linked list) of tasks
- *		
- *	
- *	PARAMETERS	: 
- *	
- *	
- *	
- *	RETURNS		: -1 if failure, 0 if success 
- */
+* Function: FindTaskViaId
+* Description: Finds a task in the collection (doubly linked list) of tasks by its ID
+*
+* Parameters:
+*
+*
+*
+* Returns: void
+*/
+-
+
+
+/*
+* Function: FindTaskWithText
+* Description: Finds a task in the collection (doubly linked list) of tasks by its text
+*
+* Parameters:
+*
+*
+*
+* Returns: void
+*/
+-
+
+/*
+* Function: DeleteTaskById
+* Description: Deletes a task in the collection (doubly linked list) of tasks by its ID
+*
+* Parameters:
+*
+*
+*
+* Returns: void
+*/
