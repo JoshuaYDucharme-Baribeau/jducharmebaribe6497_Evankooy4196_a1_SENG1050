@@ -19,7 +19,7 @@ taskToDo* tail = NULL;
  *
  *	RETURNS		: -1 if failure, 0 if success
  */
--
+
 
 
 
@@ -94,8 +94,27 @@ void FindTaskViaId() {
 *
 * Returns: void
 */
--
-
+void FindTaskWithText() {
+	char searchText[51];
+	printf("Enter the text to search for: ");
+	fgets(searchText, sizeof(searchText), stdin);
+	searchText[strcspn(searchText, "\n")] = 0; // Remove newline character
+	taskToDo* current = head;
+	int found = 0;
+	while (current != NULL) {
+		if (strstr(current->name, searchText) != NULL || strstr(current->description, searchText) != NULL) {
+			printf("Task ID: %d\n", current->taskId);
+			printf("Task: %s\n", current->name);
+			printf("Description: %s\n", current->description);
+			printf("\n");
+			found = 1;
+		}
+		current = current->nextTask;
+	}
+	if (!found) {
+		printf("No tasks found with the given text.\n");
+	}
+}
 /*
 * Function: DeleteTaskById
 * Description: Deletes a task in the collection (doubly linked list) of tasks by its ID
