@@ -3,6 +3,10 @@
 #include "toDoList.h"
 
 int main() {
+//variable for the head and tail of the linked list
+	taskToDo* head = NULL;
+	taskToDo* tail = NULL;
+
 	int choice;
 	while (1) {
 		printf("To-Do List Application\n");
@@ -21,7 +25,7 @@ int main() {
 		}
 		switch (choice) {
 		case 1:
-			AddTask();
+			AddTaskToTail(&head, &tail, 0);
 			break;
 		case 2:
 			PrintTasks();

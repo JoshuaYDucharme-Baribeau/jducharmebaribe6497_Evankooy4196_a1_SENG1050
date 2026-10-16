@@ -8,13 +8,21 @@ typedef struct taskToDo {
 	struct taskToDo* nextTask;
 	struct taskToDo* prevTask;
 } taskToDo;
+
 // Function prototypes, define here so program doesnt get mad --- simple make the actual function later
-taskToDo* AddTask();
 void PrintTasks();
+
 void FindTaskViaId();
 void FindTaskWithText();
+
+
+taskToDo* CreateTaskNode(int taskId, char* name, char* description);
+void AddTaskToTail(taskToDo** head, taskToDo** tail, int taskId);
+
+
 void DeleteTaskById();
+
+
 void FreeAllTasks();
 
-void AddNodeToEnd(taskToDo** head, taskToDo** tail, int taskId, char* name, char* description);
 #endif
