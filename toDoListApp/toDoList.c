@@ -157,3 +157,13 @@ void DeleteTaskById() {
 	}
 	printf("Task not found.\n");
 }
+void FreeAllTasks() {
+	taskToDo* current = head;
+	while (current != NULL) {
+		taskToDo* nextNode = current->nextTask;
+		free(current);
+		current = nextNode;
+	}
+	head = NULL;
+	tail = NULL;
+}
