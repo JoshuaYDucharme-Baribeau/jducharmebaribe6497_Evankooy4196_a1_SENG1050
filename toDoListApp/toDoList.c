@@ -125,3 +125,35 @@ void FindTaskWithText() {
 *
 * Returns: void
 */
+void DeleteTaskById() {
+	int deleteID;
+	printf("Enter the ID of the task to delete: ");
+	if (scanf("%d", &deleteID) != 1) {
+		printf("Invalid input.\n");
+		while (getchar() != '\n'); // Clear the input buffer
+		return;
+	}
+	while (getchar() != '\n');
+	taskToDo* current = head;
+	while (current != NULL) {
+		if (current->taskId == deleteID) {
+			if (current->prevTask != NULL) {
+				current->prevTask->nextTask = current->nextTask;
+			}
+			else {
+				head = current->nextTask; // Update head if first task is deleted
+			}
+			if (current->nextTask != NULL) {
+				current->nextTask->prevTask = current->prevTask;
+			}
+			else {
+				tail = current->prevTask; // Update tail if last task is deleted
+			}
+			free(current);
+			printf("Task with ID %d deleted successfully.\n", deleteID);
+			return;
+		}
+		current = current->nextTask;
+	}
+	printf("Task not found.\n");
+}
