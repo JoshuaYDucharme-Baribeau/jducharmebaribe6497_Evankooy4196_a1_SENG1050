@@ -10,19 +10,23 @@ typedef struct taskToDo {
 } taskToDo;
 
 // Function prototypes, define here so program doesnt get mad --- simple make the actual function later
-void PrintTasks();
+void PrintTasks(taskToDo** head);
 
-void FindTaskViaId();
-void FindTaskWithText();
+void FindTaskViaId(taskToDo** head);
+void FindTaskWithText(taskToDo** head);
 
 
 taskToDo* CreateTaskNode(int taskId, char* name, char* description);
-void AddTaskToTail(taskToDo** head, taskToDo** tail, int taskId);
+void AddTaskToTail(taskToDo** head, taskToDo** tail);
 
 
-void DeleteTaskById();
+void DeleteTaskById(taskToDo** head, taskToDo** tail);
 
 
-void FreeAllTasks();
+void FreeAllTasks(taskToDo** head, taskToDo** tail);
+
+
+char* getInputString(const char* prompt, char* outputString, size_t bufferSize);
+int getInputInt(taskToDo** head, const char* prompt, int* outputInt, size_t bufferSize);
 
 #endif

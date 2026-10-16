@@ -75,13 +75,19 @@ taskToDo* CreateTaskNode(int taskId, char* name, char* description)
  *
  *	RETURNS		: 
  */
-void AddTaskToTail(taskToDo** head, taskToDo** tail, int taskId)
+void AddTaskToTail(taskToDo** head, taskToDo** tail)
 {
 	//create the new task and store it as the new node
-	char taskName[31] = getInputString("Enter task name: ", taskName, sizeof(taskName));
-	char taskDesc[51] = getInputString("Enter task description: ", taskDesc, sizeof(taskDesc));
+	char taskName[31];
+	char taskDesc[51];
+	int taskIdInput;
 
-	taskToDo* newTaskNode = CreateTaskNode(taskId, taskName, taskDesc);
+	// get inputs
+	taskIdInput = getInputInt(head, "Enter task ID: ", &taskIdInput, sizeof(taskIdInput));
+	getInputString("Enter task name: ", taskName, sizeof(taskName));
+	getInputString("Enter task description: ", taskDesc, sizeof(taskDesc));
+
+	taskToDo* newTaskNode = CreateTaskNode(taskIdInput, taskName, taskDesc);
 	
 	//if there is no tail, it is because this is the first node
 	if (*tail == NULL)
@@ -115,23 +121,86 @@ void AddTaskToTail(taskToDo** head, taskToDo** tail, int taskId)
  */
 char* getInputString(const char* prompt, char* outputString, size_t bufferSize)
 {
-	
-	printf("%s", prompt);
-	
-	//if the termnial input is not null (and no error), copy inut to buffer
-	if (fgets(outputString, bufferSize, stdin) != NULL) {
-		// Remove newline character if there is one
-		outputString[strcspn(outputString, "\n")] = 0;
-	}
-	else {
-		// if an error occurred
-		printf("Error reading input.\n");
+	while (1)
+	{
+		printf("%s", prompt);
+		if (fgets(outputString, bufferSize, stdin) == NULL) {
+			// Read error; prompt again
+			outputString[0] = '\0';
+			printf("Error reading input. Please try again.\n");
+			
+			
+			continue;
+		}
+		size_t len = strlen(outputString);
+		if (len > 0 && outputString[len - 1] == '\n') {
+			// remove trailing newline
+			outputString[len - 1] = '\0';
+		} else {
+			// input was longer than buffer; flush remaining characters
+			int c;
+			while ((c = getchar()) != '\n' && c != EOF);
+		}
 
-		outputString[0] = '\0'; // empty string
+		// If the resulting string is empty, re-prompt
+		if (outputString[0] == '\0') {
+			printf("The input was invalid. Please try again.\nThe maximum number of characters is allowed is %lu.\n", bufferSize - 1);
+			outputString[0] = '\0'; // set the output to an empty string just in case
+			continue;
+		}
+
+		return outputString;
 	}
-	return outputString;
 }
 
+
+int getInputInt(taskToDo** head, const char* prompt, int* outputInt, size_t bufferSize)
+{
+	while (1) 
+	{
+		int duplicate_id = 0; // flag for re-entering a new id (0 if no duplicate, 1 if duplicate)
+		
+		printf("%s", prompt);
+		//if the input is a valid integer
+		if (scanf("%d", outputInt) == 1) {
+			// clear the buffer after assigning the integer
+			int ch;
+			while ((ch = getchar()) != '\n' && ch != EOF);
+
+			//check if the ID already exists in the linked list
+			taskToDo* current = *head;
+			while (current != NULL) 
+			{
+				if (current->taskId == *outputInt) {
+					//id already exists, loop again to enter a unique ID
+					printf("Task ID: %d already exists as \"%s\"\n", current->taskId, current->name);
+					printf("Please enter a unique task ID.\n");
+
+					duplicate_id = 1;
+					break;
+				}
+				current = current->nextTask;
+
+			}
+			if (duplicate_id == 1) 
+			{
+				//need to reloop to enter a new ID
+				continue; //skip the remaining code
+			}
+			else
+			{
+				break;
+			}
+			//successfully stored a unique ID, break
+		}
+		else {
+			printf("Invalid input. Please only enter an integer.\n");
+			while (getchar() != '\n'); // Clear the input buffer       
+		}
+	}
+
+	return *outputInt;
+}
 
  /*
   *	FUNCTION	: PrintTasks
@@ -144,12 +213,12 @@ char* getInputString(const char* prompt, char* outputString, size_t bufferSize)
   *
   *	RETURNS		: void
 */
-void PrintTasks() {
+void PrintTasks(taskToDo** head) {
 	if (head == NULL) {
 		printf("No tasks to display.\n");
 		return;
-}
-	taskToDo* current = head;
+	}
+	taskToDo* current = *head;
 	while (current != NULL) {
 		printf("Task ID: %d\n", current->taskId);
 		printf("Task: %s\n", current->name);
@@ -171,7 +240,7 @@ void PrintTasks() {
 *
 * Returns: void
 */
-void FindTaskViaId() {
+void FindTaskViaId(taskToDo** head) {
 	int searchID;
 	printf("Enter the ID of the task to find: ");
 	if (scanf("%d", &searchID) != 1) {
@@ -180,7 +249,7 @@ void FindTaskViaId() {
 		return;
 	}
 	while (getchar() != '\n');
-	taskToDo* current = head;
+	taskToDo* current = *head;
 	while (current != NULL) {
 		if (current->taskId == searchID) {
 			printf("Task ID: %d\n", current->taskId);
@@ -204,12 +273,12 @@ void FindTaskViaId() {
 *
 * Returns: void
 */
-void FindTaskWithText() {
+void FindTaskWithText(taskToDo** head) {
 	char searchText[51];
 	printf("Enter the text to search for: ");
 	fgets(searchText, sizeof(searchText), stdin);
 	searchText[strcspn(searchText, "\n")] = 0; // Remove newline character
-	taskToDo* current = head;
+	taskToDo* current = *head;
 	int found = 0;
 	while (current != NULL) {
 		if (strstr(current->name, searchText) != NULL || strstr(current->description, searchText) != NULL) {
@@ -235,7 +304,7 @@ void FindTaskWithText() {
 *
 * Returns: void
 */
-void DeleteTaskById() {
+void DeleteTaskById(taskToDo** head, taskToDo** tail) {
 	int deleteID;
 	printf("Enter the ID of the task to delete: ");
 	if (scanf("%d", &deleteID) != 1) {
@@ -244,20 +313,20 @@ void DeleteTaskById() {
 		return;
 	}
 	while (getchar() != '\n');
-	taskToDo* current = head;
+	taskToDo* current = *head;
 	while (current != NULL) {
 		if (current->taskId == deleteID) {
 			if (current->prevTask != NULL) {
 				current->prevTask->nextTask = current->nextTask;
 			}
 			else {
-				head = current->nextTask; // Update head if first task is deleted
+				*head = current->nextTask; // Update head if first task is deleted
 			}
 			if (current->nextTask != NULL) {
 				current->nextTask->prevTask = current->prevTask;
 			}
 			else {
-				tail = current->prevTask; // Update tail if last task is deleted
+				*tail = current->prevTask; // Update tail if last task is deleted
 			}
 			free(current);
 			printf("Task with ID %d deleted successfully.\n", deleteID);
@@ -267,13 +336,13 @@ void DeleteTaskById() {
 	}
 	printf("Task not found.\n");
 }
-void FreeAllTasks() {
-	taskToDo* current = head;
+void FreeAllTasks(taskToDo** head, taskToDo** tail) {
+	taskToDo* current = *head;
 	while (current != NULL) {
 		taskToDo* nextNode = current->nextTask;
 		free(current);
 		current = nextNode;
 	}
-	head = NULL;
-	tail = NULL;
+	*head = NULL;
+	*tail = NULL;
 }

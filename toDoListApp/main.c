@@ -25,27 +25,27 @@ int main() {
 		}
 		switch (choice) {
 		case 1:
-			AddTaskToTail(&head, &tail, 0);
+			AddTaskToTail(&head, &tail);
 			break;
 		case 2:
-			PrintTasks();
+			PrintTasks(&head);
 			break;
 		case 3:
-			FindTaskViaId();
+			FindTaskViaId(&head);
 			break;
 		case 4:
-			FindTaskWithText();
+			FindTaskWithText(&head);
 			break;
 		case 5:
-			DeleteTaskById();
+			DeleteTaskById(&head, &tail);
 			break;
 		case 6:
 			printf("Exiting and Freeing Allocated Memory.\n");
-			FreeAllTasks();
+			FreeAllTasks(&head, &tail);
 			printf("Memory freed!\n");
 			return 0;
 		default:
-			printf("Invalid choice. Please try again.\n");
+			printf("Invalid choice. Please try again using the listed options.\n");
 		}
 	}
 }
