@@ -6,6 +6,8 @@ int main() {
 //variable for the head and tail of the linked list
 	taskToDo* head = NULL;
 	taskToDo* tail = NULL;
+	int minID = 0;
+	int maxID = 0;
 
 	int choice;
 	while (1) {
@@ -25,7 +27,7 @@ int main() {
 		}
 		switch (choice) {
 		case 1:
-			AddTaskToTail(&head, &tail);
+			CreateTaskNode(&head, &tail, &minID, &maxID);
 			break;
 		case 2:
 			PrintTasks(&head);
@@ -37,11 +39,11 @@ int main() {
 			FindTaskWithText(&head);
 			break;
 		case 5:
-			DeleteTaskById(&head, &tail);
+			DeleteTaskById(&head, &tail, &minID, &maxID);
 			break;
 		case 6:
 			printf("Exiting and Freeing Allocated Memory.\n");
-			FreeAllTasks(&head, &tail);
+			FreeAllTasks(&head, &tail, &minID, &maxID);
 			printf("Memory freed!\n");
 			return 0;
 		default:

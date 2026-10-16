@@ -9,6 +9,9 @@ typedef struct taskToDo {
 	struct taskToDo* prevTask;
 } taskToDo;
 
+#define descriptionSize 51
+#define nameSize 31
+
 // Function prototypes, define here so program doesnt get mad --- simple make the actual function later
 void PrintTasks(taskToDo** head);
 
@@ -16,17 +19,19 @@ void FindTaskViaId(taskToDo** head);
 void FindTaskWithText(taskToDo** head);
 
 
-taskToDo* CreateTaskNode(int taskId, char* name, char* description);
-void AddTaskToTail(taskToDo** head, taskToDo** tail);
+taskToDo* CreateTaskNode(taskToDo** head, taskToDo** tail, int* minID, int* maxID);
+int FindInsertionPoint(taskToDo** head, taskToDo* newTask);
+int AddTaskToTail(taskToDo** head, taskToDo** tail, taskToDo* newTask);
+
+int getInputInt(taskToDo** head, const char* prompt, size_t bufferSize);
+char* getInputString(const char* prompt, size_t bufferSize);
 
 
-void DeleteTaskById(taskToDo** head, taskToDo** tail);
+void DeleteTaskById(taskToDo** head, taskToDo** tail, int* minID, int* maxID);
 
 
-void FreeAllTasks(taskToDo** head, taskToDo** tail);
+void FreeAllTasks(taskToDo** head, taskToDo** tail, int* minID, int* maxID);
 
 
-char* getInputString(const char* prompt, char* outputString, size_t bufferSize);
-int getInputInt(taskToDo** head, const char* prompt, int* outputInt, size_t bufferSize);
 
 #endif
