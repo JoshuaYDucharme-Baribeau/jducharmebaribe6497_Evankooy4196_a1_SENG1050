@@ -84,6 +84,7 @@ void AddNodeToEnd(taskToDo** head, taskToDo** tail, int taskId, char* name, char
 
 
 
+
  /*
   *	FUNCTION	: PrintTasks
   *	DESCRIPTION	: Prints all tasks in the collection (doubly linked list) of tasks
@@ -102,10 +103,9 @@ void PrintTasks() {
 }
 	taskToDo* current = head;
 	while (current != NULL) {
-		printf("Task ID: %d\n", current->id);
-		printf("Task: %s\n", current->task);
-		printf("Priority: %d\n", current->priority);
-		printf("Due Date: %s\n", current->dueDate);
+		printf("Task ID: %d\n", current->taskId);
+		printf("Task: %s\n", current->name);
+		printf("Description: %s\n", current->description);
 		printf("\n");
 		current = current->nextTask;
 	}
@@ -134,11 +134,10 @@ void FindTaskViaId() {
 	while (getchar() != '\n');
 	taskToDo* current = head;
 	while (current != NULL) {
-		if (current->id == searchID) {
-			printf("Task ID: %d\n", current->id);
-			printf("Task: %s\n", current->task);
-			printf("Priority: %d\n", current->priority);
-			printf("Due Date: %s\n", current->dueDate);
+		if (current->taskId == searchID) {
+			printf("Task ID: %d\n", current->taskId);
+			printf("Task: %s\n", current->name);
+			printf("Description: %s\n", current->description);
 			return;
 		}
 		current = current->nextTask;
@@ -157,8 +156,27 @@ void FindTaskViaId() {
 *
 * Returns: void
 */
--
-
+void FindTaskWithText() {
+	char searchText[51];
+	printf("Enter the text to search for: ");
+	fgets(searchText, sizeof(searchText), stdin);
+	searchText[strcspn(searchText, "\n")] = 0; // Remove newline character
+	taskToDo* current = head;
+	int found = 0;
+	while (current != NULL) {
+		if (strstr(current->name, searchText) != NULL || strstr(current->description, searchText) != NULL) {
+			printf("Task ID: %d\n", current->taskId);
+			printf("Task: %s\n", current->name);
+			printf("Description: %s\n", current->description);
+			printf("\n");
+			found = 1;
+		}
+		current = current->nextTask;
+	}
+	if (!found) {
+		printf("No tasks found with the given text.\n");
+	}
+}
 /*
 * Function: DeleteTaskById
 * Description: Deletes a task in the collection (doubly linked list) of tasks by its ID
@@ -169,3 +187,45 @@ void FindTaskViaId() {
 *
 * Returns: void
 */
+void DeleteTaskById() {
+	int deleteID;
+	printf("Enter the ID of the task to delete: ");
+	if (scanf("%d", &deleteID) != 1) {
+		printf("Invalid input.\n");
+		while (getchar() != '\n'); // Clear the input buffer
+		return;
+	}
+	while (getchar() != '\n');
+	taskToDo* current = head;
+	while (current != NULL) {
+		if (current->taskId == deleteID) {
+			if (current->prevTask != NULL) {
+				current->prevTask->nextTask = current->nextTask;
+			}
+			else {
+				head = current->nextTask; // Update head if first task is deleted
+			}
+			if (current->nextTask != NULL) {
+				current->nextTask->prevTask = current->prevTask;
+			}
+			else {
+				tail = current->prevTask; // Update tail if last task is deleted
+			}
+			free(current);
+			printf("Task with ID %d deleted successfully.\n", deleteID);
+			return;
+		}
+		current = current->nextTask;
+	}
+	printf("Task not found.\n");
+}
+void FreeAllTasks() {
+	taskToDo* current = head;
+	while (current != NULL) {
+		taskToDo* nextNode = current->nextTask;
+		free(current);
+		current = nextNode;
+	}
+	head = NULL;
+	tail = NULL;
+}
