@@ -19,22 +19,66 @@ taskToDo* tail = NULL;
  *
  *	RETURNS		: pointer of a taskToDo struct
  */
-AddTask()
+taskToDo* AddTask()
 {
 	//allocate memory for this new task
-	taskToDo* newTask = (taskToDo*)malloc(sizeof(taskToDo))
+	taskToDo* newTask = (taskToDo*)malloc(sizeof(taskToDo));
 
+	//validate the memory
+	if (newTask == NULL)
+	{
+		printf("Memory allocation failed.");
+		exit(EXIT_FAILURE);
+	}
+
+	//assign the id to the task
+	//newTask->taskId = xyz; 
+	char 
 	//get input of name for the task (max 30 chars plus null)
-
+	newTask->name = "hardcoded_name";
 
 	//get description of name for the task (max 50 chars plus null)
+	newTask->description = "hardcoded_description";
 
+	//set the next task (there is none since this is the most recent node)
+	newTask->nextTask = NULL;
 
+	//set the previous task to null
+	newTask->prevTask = NULL;
+	
+	return newTask;
+
+	
+
+}
+
+/*
+ *	FUNCTION	: AddTask
+ *	DESCRIPTION	: Creates and adds a task to the collection (doubly linked list) of tasks
+ *
+ *
+ *	PARAMETERS	:
+ *
+ *
+ *
+ *	RETURNS		: pointer of a taskToDo struct
+ */
+void AddNodeToEnd(taskToDo** head, taskToDo** tail, int taskId, char* name, char* description)
+{
+	//create the new task and store it as the new node
+	taskToDo* newTaskNode = AddTask(taskId, name, description);
+	
+	//if there is no tail, it is because this is the first node
+	if (*tail == NULL)
+	{
+		*head = newTaskNode;
+		*tail = newTaskNode;
+	}
+
+	//make this new node's previous task point to the last tail
+	newTaskNode->prevTask = *tail;
 	//update the tail to point to this new task's memory address
-
-
-	//free the memory of the
-
+	(*tail)->nextTask = newTaskNode;
 
 }
 
@@ -63,7 +107,7 @@ void PrintTasks() {
 		printf("Priority: %d\n", current->priority);
 		printf("Due Date: %s\n", current->dueDate);
 		printf("\n");
-		current = current->next;
+		current = current->nextTask;
 	}
 }
 

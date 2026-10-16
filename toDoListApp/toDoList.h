@@ -9,10 +9,12 @@ typedef struct taskToDo {
 	struct taskToDo* prevTask;
 } taskToDo;
 // Function prototypes, define here so program doesnt get mad --- simple make the actual function later
-int AddTask();
+taskToDo* AddTask();
 void PrintTasks();
 void FindTaskViaId();
 void FindTaskWithText();
 void DeleteTaskById();
 void FreeAllTasks();
+
+void AddNodeToEnd(taskToDo** head, taskToDo** tail, int taskId, char* name, char* description);
 #endif
