@@ -156,6 +156,8 @@ char* getInputString(const char* prompt, char* outputString, size_t bufferSize)
 
 int getInputInt(taskToDo** head, const char* prompt, int* outputInt, size_t bufferSize)
 {
+
+	while (getchar() != '\n'); // Clear the input buffer in case of previous inputs
 	while (1) 
 	{
 		int duplicate_id = 0; // flag for re-entering a new id (0 if no duplicate, 1 if duplicate)
@@ -163,7 +165,7 @@ int getInputInt(taskToDo** head, const char* prompt, int* outputInt, size_t buff
 		printf("%s", prompt);
 		//if the input is a valid integer
 		if (scanf("%d", outputInt) == 1) {
-			// clear the buffer after assigning the integer
+			// clear the buffer at the beginning of the loop
 			int ch;
 			while ((ch = getchar()) != '\n' && ch != EOF);
 
@@ -275,6 +277,8 @@ void FindTaskViaId(taskToDo** head) {
 */
 void FindTaskWithText(taskToDo** head) {
 	char searchText[51];
+	while (getchar() != '\n'); // Clear the input buffer in case of previous inputs
+	
 	printf("Enter the text to search for: ");
 	fgets(searchText, sizeof(searchText), stdin);
 	searchText[strcspn(searchText, "\n")] = 0; // Remove newline character
