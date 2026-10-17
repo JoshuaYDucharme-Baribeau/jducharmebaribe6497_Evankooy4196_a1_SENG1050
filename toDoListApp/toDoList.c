@@ -68,8 +68,8 @@ void CreateTaskNode(taskToDo** head, taskToDo** tail, int* minID, int* maxID)
 		insertionStatus = FindInsertionPoint(head, newTask);
 	}
 
-
-	//determine where to insrt the new node
+	
+	//determine where to insert the new node
 	switch (insertionStatus)
 	{
 		case 0 :
@@ -258,26 +258,33 @@ int FindInsertionPoint(taskToDo** head, taskToDo* newTask)
 {
 	int insertionMode = 0; // 0 for tail, 1 for middle, 2 for head
 
-	// if the list is empty insert as the head
-	if (head == NULL || *head == NULL)
+	// check if the memory location for the head was null
+	if (head == NULL)
 	{
-		newTask->prevTask = NULL;
-		newTask->nextTask = NULL;
-		//update the list's head pointer as the new node
-		*head = newTask;
-		// Only node in list is both the head and tail.
-		return 0;
+		//return with an error -1 since the head pointer was passed incorrectly
+		return -1;
 	}
+	//at this point, the memory location for the head is valid
+	//if the head is null, 
+	if (*head == NULL) {
+		//this task is the first node in the list, make it the head and tail
+        newTask->prevTask = NULL;
+        newTask->nextTask = NULL;
+        *head = newTask;
+        return 0;
+    }
 
+	//since there is already a node in the list, iterate through the list starting at the head
 	taskToDo* current = *head;
-	//if newTask id is smaller than current head
+	//before walking through, check if the new task ID is smaller than the current listhead's id
 	if (newTask->taskId < current->taskId)
 	{
+		//insert new task at the head
 		newTask->prevTask = NULL;
 		newTask->nextTask = current;
 		current->prevTask = newTask;
 		*head = newTask;
-		return 2; // inserted at head
+		return 2; // return insertion mode as "at head"
 	}
 
 	// walk the list until we find insertion point (stop at last node or where next's id is >= new id)
@@ -285,19 +292,28 @@ int FindInsertionPoint(taskToDo** head, taskToDo* newTask)
 	{
 		current = current->nextTask;
 	}
-
-	// now insert after 'current'
-	newTask->prevTask = current;
-	newTask->nextTask = current->nextTask; // may be NULL if inserting at tail
-	current->nextTask = newTask;
-	if (newTask->nextTask != NULL)
+	while (current != NULL)
 	{
-		newTask->nextTask->prevTask = newTask;
-		insertionMode = 1; // middle
-	}
-	else
-	{
-		insertionMode = 0; // tail
+		if (current->taskId < newTask->taskId)
+		{
+			if (current->nextTask->taskId > newTask->taskId)
+			{
+				// insertion point is between current and next
+				newTask->prevTask = current;
+				newTask->nextTask = current->nextTask;
+				current->nextTask = newTask;
+				//if insertion was not at the tail (should always happen, as tail insert is checked prior to call)
+				if (newTask->nextTask != NULL)
+				{
+					//update the next node's previous task to be the new task
+					newTask->nextTask->prevTask = newTask;
+					insertionMode = 1; //inserted somewhere in the middle
+					break; //exit loop to return
+				}
+			}
+		}
+		//we haven't reached the insertion point, move on
+		current = current->nextTask;
 	}
 	return insertionMode;
 }
@@ -422,20 +438,60 @@ void DeleteTaskById(taskToDo** head, taskToDo** tail, int* minID, int* maxID) {
 	while (getchar() != '\n');
 	taskToDo* current = *head;
 	while (current != NULL) {
+		//if this is the node to delete
 		if (current->taskId == deleteID) {
+			
+			//if this is NOT the head
 			if (current->prevTask != NULL) {
+				//update the previous node's next task to be the one after the one we are deleting
 				current->prevTask->nextTask = current->nextTask;
 			}
+			//if it is the head that we are deleting,
 			else {
-				*head = current->nextTask; // Update head if first task is deleted
-				*maxID = 0; // set maxID to 0 if the last task is deleted
+				
+				*head = current->nextTask; // Update head of the list, will be NULL if this there was only one node, since the nextTask would have been NULL
+				//if this wasn't the only node in the list
+				if (*head != NULL)
+				{
+					//update the new list head's previous task to point to NULL
+					(*head)->prevTask = NULL;
+					//update the minimum ID in the list to be this new head's id
+					*minID = (*head)->taskId;
+				}
+				//if there was only one node in the list
+				else
+				{
+					//reset the min and max ID's to 0
+					*minID = 0;
+					*maxID = 0;
+				}
+
 			}
+
+			//if this is NOT the tail
 			if (current->nextTask != NULL) {
+				//update the next node's previous task to be the one before the one we are deleting
 				current->nextTask->prevTask = current->prevTask;
 			}
+			//if it is the tail being deleted
 			else {
-				*tail = current->prevTask; // Update tail if last task is deleted
-				*minID = 0; // set minID to 0 if the last task is deleted
+				*tail = current->prevTask; // Update tail of the list, will be NULL if there is no previous node since prevTask would point to NULL
+
+				//if this wasn't the only node in the list
+				if (*tail != NULL)
+				{
+					//update the new list tail's next task to point to NULL
+					(*tail)->nextTask = NULL;
+					//update the maximum ID in the list to be this new tail's id
+					*maxID = (*tail)->taskId;
+				}
+				//if there was only one node in the list
+				else
+				{
+					//reset the min and max ID's to 0
+					*minID = 0;
+					*maxID = 0;
+				}
 			}
 			free(current);
 			printf("Task with ID %d deleted successfully.\n", deleteID);
