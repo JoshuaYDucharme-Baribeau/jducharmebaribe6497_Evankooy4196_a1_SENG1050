@@ -1,9 +1,18 @@
+/*
+ * FILE             : main.c
+ * PROJECT          : Assignment 1 Data Structures 
+ * PROGRAMMERS      : Joshua Ducharme-Baribeau & Erik vanKooy
+ * FIRST VERSION    : October 15 2026
+ * DESCRIPTION      : C Source file for "main.c" containing main menu logic.
+ *                    Main entry for the application
+ */
+
 #define _CRT_SECURE_NO_WARNINGS
 #include <stdio.h>
 #include "toDoList.h"
 
 int main() {
-//variable for the head and tail of the linked list
+	//variable for the head and tail of the linked list, as well as the minimum and maximum id ints in the list (empty if they are 0)
 	taskToDo* head = NULL;
 	taskToDo* tail = NULL;
 	int minID = 0;

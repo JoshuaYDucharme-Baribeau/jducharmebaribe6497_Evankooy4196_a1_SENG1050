@@ -1,3 +1,11 @@
+/*
+ * FILE             : toDoList.h
+ * PROJECT          : Assignment 1 Data Structures
+ * PROGRAMMERS      : Joshua Ducharme-Baribeau & Erik vanKooy
+ * FIRST VERSION    : October 14 2026
+ * DESCRIPTION      : C header file for "toDoList.c" containing prototypes and defines.
+ *                    
+ */
 #ifndef TODO_LIST_H
 #define TODO_LIST_H
 // Defining so that we dont run errors
@@ -12,7 +20,7 @@ typedef struct taskToDo {
 #define descriptionSize 51
 #define nameSize 31
 
-// Function prototypes, define here so program doesnt get mad --- simple make the actual function later
+// Function prototypes, define here so program doesnt get mad 
 void PrintTasks(taskToDo** head);
 
 void FindTaskViaId(taskToDo** head);

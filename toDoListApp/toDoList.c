@@ -1,3 +1,12 @@
+/*
+ * FILE             : toDoList.c
+ * PROJECT          : Assignment 1 Data Structures
+ * PROGRAMMERS      : Joshua Ducharme-Baribeau & Erik vanKooy
+ * FIRST VERSION    : October 14 2026
+ * DESCRIPTION      : C Source file for "toDoList.c" containing the program back-end logic.
+ *                    heavily commented for evaluation and collaboration
+ */
+//we remove warnings that we don't like
 #define _CRT_SECURE_NO_WARNINGS
 #include <stdio.h>
 #include <stdlib.h>
@@ -8,13 +17,13 @@
 /*
  *	FUNCTION	: CreateTaskNode
  *	DESCRIPTION	: Creates a new task node by calling different functions to get valid taskinfo
+ *				  prints an insertion status based on where the task was inserted in the list
  *
- *
- *	PARAMETERS	:
- *
- *
- *
- *	RETURNS		:
+ *	PARAMETERS	: taskToDo** head	: pointer to pointer of the head of the linked list
+ *				: taskToDo** tail	: pointer to pointer of the tail of the linked list
+ *				: int* minID		: pointer to the smallest id of the list, assumes the list is sorted by ascending ID
+ *				: int* maxID		: pointer to the largest id of the list, assumes the list is sorted by ascending ID
+ *	RETURNS		: void NOTHING
  */
 void CreateTaskNode(taskToDo** head, taskToDo** tail, int* minID, int* maxID)
 {
@@ -104,14 +113,15 @@ void CreateTaskNode(taskToDo** head, taskToDo** tail, int* minID, int* maxID)
 
 /*
  *	FUNCTION	: AddTaskToTail
- *	DESCRIPTION	: Calls a function to add a new task at the end of the linked list
+ *	DESCRIPTION	: updates relevant nodes' next and previous pointers to insert the new node at the tail
  *
  *
- *	PARAMETERS	:
+ *	PARAMETERS	: taskToDo** head	: pointer to pointer of the head of the linked list
+ *				: taskToDo** tail	: pointer to pointer of the tail of the linked list
+ *				: taskToDo*  newTask: pointer to the newTask/node that is being inserted
  *
  *
- *
- *	RETURNS		: 
+ *	RETURNS		: int insertionMode : indicates if the insertion was successful (0)
  */
 int AddTaskToTail(taskToDo** head, taskToDo** tail, taskToDo* newTask)
 {
@@ -149,45 +159,50 @@ int AddTaskToTail(taskToDo** head, taskToDo** tail, taskToDo* newTask)
 }
 
 /*
- *	FUNCTION	: 
+ *	FUNCTION	: getInputString
  *	DESCRIPTION	: a helper function to get a string input from the user
- *		
  *	
- *	PARAMETERS	: 
- *	
- *	
- *	
- *	RETURNS		:
+ *	PARAMETERS	: const char* prompt : a message to prompt the user what to enter
+ *				: size_t bufferSize  : the size of the input the user may enter
+ * 
+ *	RETURNS		: char* outputString : the string to be used by the caller
  */
 char* getInputString(const char* prompt, size_t bufferSize)
 {
+	//allocate memory
 	char* outputString = (char*)malloc(bufferSize);
+	//check for allocation failure
 	if (outputString == NULL) {
 		printf("\n\nMemory allocation failed. Exiting\n");
 		exit(EXIT_FAILURE);
 	}
+
 	while (1)
 	{
 		printf("%s", prompt);
 		if (fgets(outputString, bufferSize, stdin) == NULL) {
-			// Read error; prompt again
+			// if there was an error reading input
 			outputString[0] = '\0';
 			printf("\n\nError reading input. Please try again.\n");
-			
-			
+			//try again
 			continue;
 		}
+
+		//get the length of the output string
 		size_t len = strlen(outputString);
+		
+		//if length bigger than 0, make sure the last char is null terminator
 		if (len > 0 && outputString[len - 1] == '\n') {
-			// remove trailing newline
+			// remove trailing newline from user pressing enter
 			outputString[len - 1] = '\0';
-		} else {
-			// input was longer than buffer; flush remaining characters
+		} 
+		//else if input was longer than buffer and thus had no null terminator, truncate the input 
+		else {
 			int c;
 			while ((c = getchar()) != '\n' && c != EOF);
 		}
 
-		// If the resulting string is empty, re-prompt
+		//if the resulting string is empty, re-prompt
 		if (outputString[0] == '\0') {
 			printf("\n\nThe input was invalid. Please try again.\nThe maximum number of characters is allowed is %lu.\n", bufferSize - 1);
 			outputString[0] = '\0'; // set the output to an empty string just in case
@@ -198,7 +213,16 @@ char* getInputString(const char* prompt, size_t bufferSize)
 	}
 }
 
-
+/*
+ *	FUNCTION	: getInputInt
+ *	DESCRIPTION	: a helper function to get a valid task ID int from the user
+ *
+ *	PARAMETERS	: taskToDo** head	 : pointer to pointer of the head of the linked list
+ *				: const char* prompt : a message to prompt the user what to enter
+ *				: size_t bufferSize  : the size of the input the user may enter
+ *
+ *	RETURNS		: int outputInt		 : the integer to be used by the caller
+ */
 int getInputInt(taskToDo** head, const char* prompt, size_t bufferSize)
 {
 	int outputInt;
@@ -252,7 +276,19 @@ int getInputInt(taskToDo** head, const char* prompt, size_t bufferSize)
 	return outputInt;
 }
 
-//find insertion point for the new node, return 0 for tail, 1 for head or middle
+/*
+ *	FUNCTION	: FindInsertionPoint
+ *	DESCRIPTION	: finds where in the list a new node must be inserted, at heads or middle.
+				  Updates previous and next pointers accordingly, as well as the head node if required
+ *
+ *
+ *	PARAMETERS	: taskToDo** head	: pointer to pointer of the head of the linked list
+ *				: taskToDo*  newTask: pointer to the newTask/node that is being inserted
+ *				:	NB: Lots of in-line comments since this can be confusing
+ *
+ *
+ *	RETURNS		: int insertionMode : indicates if the insertion was successful at head(2), orr middle(1) or failure (-1)
+ */
 int FindInsertionPoint(taskToDo** head, taskToDo* newTask)
 {
 	int insertionMode = 0; // 0 for tail, 1 for middle, 2 for head
@@ -323,11 +359,9 @@ int FindInsertionPoint(taskToDo** head, taskToDo* newTask)
   *	DESCRIPTION	: Prints all tasks in the collection (doubly linked list) of tasks
   *
   *
-  *	PARAMETERS	: None
+  *	PARAMETERS	: taskToDo** head	: pointer to pointer of the head of the linked list
   *
-  *
-  *
-  *	RETURNS		: void
+  *	RETURNS		: void NOTHING
 */
 void PrintTasks(taskToDo** head) {
 	if (*head == NULL) {
@@ -352,7 +386,7 @@ void PrintTasks(taskToDo** head) {
 * Function: FindTaskViaId
 * Description: Finds a task in the collection (doubly linked list) of tasks by its ID
 *
-* Parameters: None
+* Parameters: taskToDo** head : pointer to pointer of the head of the linked list
 *
 *
 *
@@ -393,7 +427,7 @@ void FindTaskViaId(taskToDo** head) {
 * Description: Finds a task in the collection (doubly linked list) of tasks by the search text
 *				The search IS CASE SENSITIVE
 *
-* Parameters:
+* Parameters: taskToDo** head : pointer to pointer of the head of the linked list
 *
 *
 *
@@ -440,9 +474,10 @@ void FindTaskWithText(taskToDo** head) {
 * Function: DeleteTaskById
 * Description: Deletes a task in the collection (doubly linked list) of tasks by its ID
 *
-* Parameters:
-*
-*
+* Parameters:	taskToDo** head	: pointer to pointer of the head of the linked list
+*				taskToDo** tail	: pointer to pointer of the tail of the linked list
+*				int* minID		: pointer to the smallest id of the list, assumes the list is sorted by ascending ID
+*				int* maxID		: pointer to the largest id of the list, assumes the list is sorted by ascending ID
 *
 * Returns: void
 */
@@ -525,6 +560,18 @@ void DeleteTaskById(taskToDo** head, taskToDo** tail, int* minID, int* maxID) {
 	printf("\n\nTask with ID \"%d\" not found.\n", deleteID);
 }
 
+
+/*
+* Function: FreeAllTasks
+* Description: frees all tasks in the list anf the min and max id
+*
+* Parameters:	taskToDo** head	: pointer to pointer of the head of the linked list
+*				taskToDo** tail	: pointer to pointer of the tail of the linked list
+*				int* minID		: pointer to the smallest id of the list, assumes the list is sorted by ascending ID
+*				int* maxID		: pointer to the largest id of the list, assumes the list is sorted by ascending ID
+*
+* Returns: void
+*/
 void FreeAllTasks(taskToDo** head, taskToDo** tail, int* minID, int* maxID) {
 	taskToDo* current = *head;
 	while (current != NULL) {
