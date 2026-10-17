@@ -1,6 +1,6 @@
 #ifndef TODO_LIST_H
 #define TODO_LIST_H
-// Defiing so that we dont run errors
+// Defining so that we dont run errors
 typedef struct taskToDo {
 	int taskId;
 	char name[31];
