@@ -4,9 +4,7 @@
 #include <string.h>
 #include <ctype.h>
 #include "toDoList.h"
-//Global variable for the head and tail of the linked list
-//taskToDo* head = NULL;
-//taskToDo* tail = NULL;
+
 
 /*
  *	FUNCTION	: CreateTaskNode
@@ -19,7 +17,7 @@
  *
  *	RETURNS		:
  */
-taskToDo* CreateTaskNode(taskToDo** head, taskToDo** tail, int* minID, int* maxID)
+void CreateTaskNode(taskToDo** head, taskToDo** tail, int* minID, int* maxID)
 {
 	char taskName[nameSize];
 	char taskDesc[descriptionSize];
@@ -77,20 +75,24 @@ taskToDo* CreateTaskNode(taskToDo** head, taskToDo** tail, int* minID, int* maxI
 		case 0 :
 			//inserted at tail
 			printf("\nTask with ID %d inserted successfully at the end!\n", newTask->taskId);
+			break;
 		case 1:
 			//inserted in middle
 			printf("\nTask with ID %d inserted successfully!\n", newTask->taskId);
+			break;
 		case 2:
 			//inserted at head
 			printf("\nTask with ID %d inserted successfully at the top!\n", newTask->taskId);
+			break;
 		default:
 			printf("An unexpected error has occurred and insertion failed.\nExiting.");
 			printf("Error code: %d\n", errno);
 			exit(EXIT_FAILURE);
+			break;
 	}
 
 	//determine if the min or max ID's need to be updated
-	if (newTask->taskId < *minID)
+	if (newTask->taskId < *minID || newTask->taskId == 0)
 	{
 		*minID = newTask->taskId;
 	}
@@ -98,6 +100,7 @@ taskToDo* CreateTaskNode(taskToDo** head, taskToDo** tail, int* minID, int* maxI
 	{
 		*maxID = newTask->taskId;
 	}
+	return;
 }
 
 /*
@@ -253,56 +256,48 @@ int getInputInt(taskToDo** head, const char* prompt, size_t bufferSize)
 //find insertion point for the new node, return 0 for tail, 1 for head or middle
 int FindInsertionPoint(taskToDo** head, taskToDo* newTask)
 {
-	int insertionMode = 0; // 0 for tail, 1 for head or middle
-	//iterate through each node
-	taskToDo* current = *head;
-	while (current != NULL)
+	int insertionMode = 0; // 0 for tail, 1 for middle, 2 for head
+
+	// if the list is empty insert as the head
+	if (head == NULL || *head == NULL)
 	{
+		newTask->prevTask = NULL;
+		newTask->nextTask = NULL;
+		//update the list's head pointer as the new node
+		*head = newTask;
+		// Only node in list is both the head and tail.
+		return 0;
+	}
 
-		//else if the new id is unique, and is already checked to not be larger than the max or smaller than the min
-		if (current->taskId != newTask->taskId)
-		{
+	taskToDo* current = *head;
+	//if newTask id is smaller than current head
+	if (newTask->taskId < current->taskId)
+	{
+		newTask->prevTask = NULL;
+		newTask->nextTask = current;
+		current->prevTask = newTask;
+		*head = newTask;
+		return 2; // inserted at head
+	}
 
-				if (current->taskId < newTask->taskId && newTask->taskId < current->nextTask->taskId)
-			{
-					//the new node doesn't belong between the current and next, move on
-				}
-				else if (current->taskId < newTask->taskId && newTask->taskId > current->nextTask->taskId)
-				{
-					//this is where we need to insert the new node
-					// because the new id is smaller than the next and larger than the current, there will be no duplicates
+	// walk the list until we find insertion point (stop at last node or where next's id is >= new id)
+	while (current->nextTask != NULL && current->nextTask->taskId < newTask->taskId)
+	{
+		current = current->nextTask;
+	}
 
-					//update the new node's next and previous pointers to point to the current and next nodes
-					newTask->prevTask = current;
-					newTask->nextTask = current->nextTask;
-					//change the current node's next pointer to point to the new node
-					current->nextTask = newTask;
-					//change the next node's previous pointer to point to the new node
-					//reaching through the currrent node's "next" pointer to update its previous pointer to the new node
-					current->nextTask->prevTask = newTask;
-
-					//change the insertion mode to 1
-					insertionMode = 1;
-					if (newTask->prevTask == NULL)
-					{
-						//task was inserted at the head 
-						// update the linked list's head pointer to point to the new node 
-						*head = newTask;
-
-						// and change the insertion mode to 2 since we inserted at the head
-						insertionMode = 2;
-					}
-					//thus we can break the loop early since the updates are complete
-					break;
-			}
-			
-		}
-		//SHOULD NOT OCCUR, id was already verified as unique prior to function call
-		else if (current->taskId == newTask->taskId)
-		{
-			insertionMode = -1; //error code
-			break; //exit the immediate while loop to re-enter a new ID
-		}
+	// now insert after 'current'
+	newTask->prevTask = current;
+	newTask->nextTask = current->nextTask; // may be NULL if inserting at tail
+	current->nextTask = newTask;
+	if (newTask->nextTask != NULL)
+	{
+		newTask->nextTask->prevTask = newTask;
+		insertionMode = 1; // middle
+	}
+	else
+	{
+		insertionMode = 0; // tail
 	}
 	return insertionMode;
 }
@@ -332,6 +327,7 @@ void PrintTasks(taskToDo** head) {
 		printf("\n");
 		current = current->nextTask;
 	}
+	return;
 }
 
 
@@ -366,6 +362,7 @@ void FindTaskViaId(taskToDo** head) {
 		current = current->nextTask;
 	}
 	printf("Task not found.\n");
+	return;
 }
 
 
@@ -401,7 +398,9 @@ void FindTaskWithText(taskToDo** head) {
 	if (!found) {
 		printf("No tasks found with the given text.\n");
 	}
+	return;
 }
+
 /*
 * Function: DeleteTaskById
 * Description: Deletes a task in the collection (doubly linked list) of tasks by its ID
@@ -446,6 +445,7 @@ void DeleteTaskById(taskToDo** head, taskToDo** tail, int* minID, int* maxID) {
 	}
 	printf("Task not found.\n");
 }
+
 void FreeAllTasks(taskToDo** head, taskToDo** tail, int* minID, int* maxID) {
 	taskToDo* current = *head;
 	while (current != NULL) {

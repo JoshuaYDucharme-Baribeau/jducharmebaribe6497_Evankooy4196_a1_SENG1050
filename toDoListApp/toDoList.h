@@ -19,7 +19,7 @@ void FindTaskViaId(taskToDo** head);
 void FindTaskWithText(taskToDo** head);
 
 
-taskToDo* CreateTaskNode(taskToDo** head, taskToDo** tail, int* minID, int* maxID);
+void CreateTaskNode(taskToDo** head, taskToDo** tail, int* minID, int* maxID);
 int FindInsertionPoint(taskToDo** head, taskToDo* newTask);
 int AddTaskToTail(taskToDo** head, taskToDo** tail, taskToDo* newTask);
 
