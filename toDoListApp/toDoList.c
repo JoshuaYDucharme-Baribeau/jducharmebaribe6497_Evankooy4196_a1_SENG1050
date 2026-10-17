@@ -29,7 +29,7 @@ void CreateTaskNode(taskToDo** head, taskToDo** tail, int* minID, int* maxID)
 	//validate the memory for the new node struct
 	if (newTask == NULL)
 	{
-		printf("Memory allocation failed :( Emergency exit!");
+		printf("\n\nMemory allocation failed :( Emergency exit!");
 		printf("Error code: %d\n", errno);
 		exit(EXIT_FAILURE);
 	}
@@ -37,16 +37,16 @@ void CreateTaskNode(taskToDo** head, taskToDo** tail, int* minID, int* maxID)
 	//get a valid task id
 		//only checks if the id is unique, not where it lands in the list.
 		//returns an integer of a validated id
-	newTask->taskId = getInputInt(head, "Enter task ID: ", sizeof(taskIdInput));
+	newTask->taskId = getInputInt(head, "\nEnter new task's ID (positive int only): ", sizeof(taskIdInput));
 
 	//get a valid task name and copy it to the newtask's name
 	//strncpy([thing to assign to], [thing to copy from[calls function which returns char*]], [max number of characters to copy])
-	strncpy(newTask->name, getInputString("Enter task name: ", sizeof(taskName)), sizeof(taskName) - 1);
+	strncpy(newTask->name, getInputString("\nEnter new task's name (max 30 chars): ", sizeof(taskName)), sizeof(taskName) - 1);
 	//ensure the last character is a null terminator to prevent buffer overflow
 	newTask->name[sizeof(taskName) - 1] = '\0';
 
 	//get a valid task description and copy it to the newtask's description
-	strncpy(newTask->description, getInputString("Enter task description: ", sizeof(taskDesc)), sizeof(taskDesc) - 1);
+	strncpy(newTask->description, getInputString("\nEnter new task's description (max 30 chars): ", sizeof(taskDesc)), sizeof(taskDesc) - 1);
 	//ensure the last character is a null terminator to prevent buffer overflow
 	newTask->description[sizeof(taskDesc) - 1] = '\0';
 
@@ -73,18 +73,18 @@ void CreateTaskNode(taskToDo** head, taskToDo** tail, int* minID, int* maxID)
 	{
 		case 0 :
 			//inserted at tail
-			printf("\nTask with ID %d inserted successfully at the end!\n", newTask->taskId);
+			printf("\nTask with ID \"%d\" inserted successfully at the end!\n", newTask->taskId);
 			break;
 		case 1:
 			//inserted in middle
-			printf("\nTask with ID %d inserted successfully!\n", newTask->taskId);
+			printf("\nTask with ID \"%d\" inserted successfully!\n", newTask->taskId);
 			break;
 		case 2:
 			//inserted at head
-			printf("\nTask with ID %d inserted successfully at the top!\n", newTask->taskId);
+			printf("\nTask with ID \"%d\" inserted successfully at the top!\n", newTask->taskId);
 			break;
 		default:
-			printf("An unexpected error has occurred and insertion failed.\nExiting.");
+			printf("\n\nAn unexpected error has occurred and insertion failed.\nExiting.");
 			printf("Error code: %d\n", errno);
 			exit(EXIT_FAILURE);
 			break;
@@ -163,7 +163,7 @@ char* getInputString(const char* prompt, size_t bufferSize)
 {
 	char* outputString = (char*)malloc(bufferSize);
 	if (outputString == NULL) {
-		printf("Memory allocation failed.");
+		printf("\n\nMemory allocation failed. Exiting\n");
 		exit(EXIT_FAILURE);
 	}
 	while (1)
@@ -172,7 +172,7 @@ char* getInputString(const char* prompt, size_t bufferSize)
 		if (fgets(outputString, bufferSize, stdin) == NULL) {
 			// Read error; prompt again
 			outputString[0] = '\0';
-			printf("Error reading input. Please try again.\n");
+			printf("\n\nError reading input. Please try again.\n");
 			
 			
 			continue;
@@ -189,7 +189,7 @@ char* getInputString(const char* prompt, size_t bufferSize)
 
 		// If the resulting string is empty, re-prompt
 		if (outputString[0] == '\0') {
-			printf("The input was invalid. Please try again.\nThe maximum number of characters is allowed is %lu.\n", bufferSize - 1);
+			printf("\n\nThe input was invalid. Please try again.\nThe maximum number of characters is allowed is %lu.\n", bufferSize - 1);
 			outputString[0] = '\0'; // set the output to an empty string just in case
 			continue;
 		}
@@ -221,7 +221,7 @@ int getInputInt(taskToDo** head, const char* prompt, size_t bufferSize)
 			{
 				if (current->taskId == outputInt) {
 					//id already exists, loop again to enter a unique ID
-					printf("Task ID: %d already exists as \"%s\"\n", current->taskId, current->name);
+					printf("\n\nTask ID: %d already exists with the name \"%s\"\n", current->taskId, current->name);
 					printf("Please enter a unique task ID.\n");
 
 					duplicate_id = 1;
@@ -244,7 +244,7 @@ int getInputInt(taskToDo** head, const char* prompt, size_t bufferSize)
 			}
 		}
 		else {
-			printf("Invalid input. Please enter an integer larger than 0.\n");
+			printf("\n\nInvalid input. Please enter an integer larger than 0.\n");
 			while (getchar() != '\n'); // Clear the input buffer       
 		}
 	}
@@ -330,15 +330,16 @@ int FindInsertionPoint(taskToDo** head, taskToDo* newTask)
   *	RETURNS		: void
 */
 void PrintTasks(taskToDo** head) {
-	if (head == NULL) {
-		printf("No tasks to display.\n");
+	if (*head == NULL) {
+		printf("\nNo tasks to display.\n");
 		return;
 	}
 	taskToDo* current = *head;
+	printf("\n");
 	while (current != NULL) {
-		printf("Task ID: %d\n", current->taskId);
-		printf("Task: %s\n", current->name);
-		printf("Description: %s\n", current->description);
+		printf("\tTask ID\t\t: %d\n", current->taskId);
+		printf("\tTask\t\t: %s\n", current->name);
+		printf("\tDescription\t: %s\n", current->description);
 		printf("\n");
 		current = current->nextTask;
 	}
@@ -359,9 +360,14 @@ void PrintTasks(taskToDo** head) {
 */
 void FindTaskViaId(taskToDo** head) {
 	int searchID;
+	if (*head == NULL) {
+		printf("\n\nThere are no tasks to find! Add one first.\n");
+		return;
+	}
+
 	printf("Enter the ID of the task to find: ");
 	if (scanf("%d", &searchID) != 1) {
-		printf("Invalid input.\n");
+		printf("\n\nInvalid input.\n");
 		while (getchar() != '\n'); // Clear the input buffer
 		return;
 	}
@@ -369,21 +375,23 @@ void FindTaskViaId(taskToDo** head) {
 	taskToDo* current = *head;
 	while (current != NULL) {
 		if (current->taskId == searchID) {
-			printf("Task ID: %d\n", current->taskId);
-			printf("Task: %s\n", current->name);
-			printf("Description: %s\n", current->description);
+			printf("\n\nTask Found!\n");
+			printf("\tTask ID\t\t: %d\n", current->taskId);
+			printf("\tTask\t\t: %s\n", current->name);
+			printf("\tDescription\t: %s\n", current->description);
 			return;
 		}
 		current = current->nextTask;
 	}
-	printf("Task not found.\n");
+	printf("\n\nTask not found.\n");
 	return;
 }
 
 
 /*
 * Function: FindTaskWithText
-* Description: Finds a task in the collection (doubly linked list) of tasks by its text
+* Description: Finds a task in the collection (doubly linked list) of tasks by the search text
+*				The search IS CASE SENSITIVE
 *
 * Parameters:
 *
@@ -392,26 +400,38 @@ void FindTaskViaId(taskToDo** head) {
 * Returns: void
 */
 void FindTaskWithText(taskToDo** head) {
-	char searchText[51];
 	while (getchar() != '\n'); // Clear the input buffer in case of previous inputs
-	
-	printf("Enter the text to search for: ");
+	char searchText[51];
+	if (*head == NULL) {
+		printf("\n\nThere are no tasks to find! Add one first.\n");
+		return;
+	}
+		
+	printf("\nEnter the text to search for: ");
 	fgets(searchText, sizeof(searchText), stdin);
 	searchText[strcspn(searchText, "\n")] = 0; // Remove newline character
+	
+	if (searchText[0] == '\0') 
+	{
+		printf("\nThe search term you entered was empty. Returning to menu.\n");
+		return;
+	}
 	taskToDo* current = *head;
 	int found = 0;
 	while (current != NULL) {
 		if (strstr(current->name, searchText) != NULL || strstr(current->description, searchText) != NULL) {
-			printf("Task ID: %d\n", current->taskId);
-			printf("Task: %s\n", current->name);
-			printf("Description: %s\n", current->description);
+			
+			printf("\n\nTask(s) found matching \"%s\"!\n", searchText);
+			printf("\tTask ID\t\t: %d\n", current->taskId);
+			printf("\tTask\t\t: %s\n", current->name);
+			printf("\tDescription\t: %s\n", current->description);
 			printf("\n");
 			found = 1;
 		}
 		current = current->nextTask;
 	}
 	if (!found) {
-		printf("No tasks found with the given text.\n");
+		printf("\n\nNo tasks found with text matching\"%s\".\n", searchText);
 	}
 	return;
 }
@@ -428,9 +448,13 @@ void FindTaskWithText(taskToDo** head) {
 */
 void DeleteTaskById(taskToDo** head, taskToDo** tail, int* minID, int* maxID) {
 	int deleteID;
-	printf("Enter the ID of the task to delete: ");
+	if (*minID == 0 && *maxID == 0) {
+		printf("\n\nThere are no tasks to delete! Add one first.\n");
+		return;
+	}
+	printf("\nEnter the ID of the task to delete: ");
 	if (scanf("%d", &deleteID) != 1) {
-		printf("Invalid input.\n");
+		printf("\n\nInvalid input.\n");
 		while (getchar() != '\n'); // Clear the input buffer
 		return;
 	}
@@ -498,7 +522,7 @@ void DeleteTaskById(taskToDo** head, taskToDo** tail, int* minID, int* maxID) {
 		}
 		current = current->nextTask;
 	}
-	printf("Task not found.\n");
+	printf("\n\nTask with ID \"%d\" not found.\n", deleteID);
 }
 
 void FreeAllTasks(taskToDo** head, taskToDo** tail, int* minID, int* maxID) {

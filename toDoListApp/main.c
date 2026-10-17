@@ -11,17 +11,17 @@ int main() {
 
 	int choice;
 	while (1) {
-		printf("To-Do List Application\n");
+		printf("\n\nTo-Do List Application\n");
 		printf("1. Add Task\n");
 		printf("2. Print Tasks\n");
 		printf("3. Find Task by ID\n");
 		printf("4. Find Task by Text\n");
 		printf("5. Delete Task by ID\n");
 		printf("6. Exit\n");
-		printf("Enter your choice: ");
+		printf("\nEnter your choice: ");
 		
 		if (scanf("%d", &choice) != 1) {
-			printf("Invalid input. Please enter a number.\n");
+			printf("\nInvalid input. Please enter a number.\n");
 			while (getchar() != '\n'); // Clear the input buffer
 			continue;
 		}
@@ -42,12 +42,12 @@ int main() {
 			DeleteTaskById(&head, &tail, &minID, &maxID);
 			break;
 		case 6:
-			printf("Exiting and Freeing Allocated Memory.\n");
+			printf("\n\nExiting and Freeing Allocated Memory.\n");
 			FreeAllTasks(&head, &tail, &minID, &maxID);
 			printf("Memory freed!\n");
 			return 0;
 		default:
-			printf("Invalid choice. Please try again using the listed options.\n");
+			printf("\n\nInvalid choice. Please try again using the listed options.\n");
 		}
 	}
 }
